@@ -1,8 +1,8 @@
 # datalab 报告
 
-姓名：Kerry Chia
+姓名：贾雨舟
 
-学号：（请自行补填）
+学号：2025201789
 
 | 总分 | bitAnd | bitXor | samesign | logtwo | byteSwap | reverse | logicalShift | leftBitCount | float_i2f | floatScale2 | float64_f2i | floatPower2 |
 | --------- | ------------- | ------------- | ------------- |----------------- |-----------| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
