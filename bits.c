@@ -19,7 +19,6 @@
  * Difficulty: 1
  */
 int bitAnd(int x, int y) {
-    /* 德摩根律：x&y = ~(~x | ~y)，"两格都是1" = "不是至少一格为0" */
     return ~(~x | ~y);
 }
 
@@ -31,7 +30,6 @@ int bitAnd(int x, int y) {
  *   Difficulty: 1
  */
 int bitXor(int x, int y) {
-    /* "两格不同" = 既不是"都是1"(x&y)，也不是"都是0"(~x&~y) */
     return ~(x & y) & ~(~x & ~y);
 }
 
@@ -52,8 +50,6 @@ int bitXor(int x, int y) {
  *   1 if x and y have the same sign , 0 otherwise.
  */
 int samesign(int x, int y) {
-    /* 0 单独算一类：都0算同号；恰好一个0算不同号；
-       都非0时符号位相同 <=> (x^y) 的第31格是0 */
     if (!x && !y)
         return 1;
     if (!x ^ !y)
@@ -71,7 +67,6 @@ int samesign(int x, int y) {
  *   Difficulty: 4
  */
 int logtwo(int v) {
-    /* 二分找最高位的1：比较式本身是0/1，<<4/3/2/1 后既当累加值又当移位量 */
     int r = 0;
     int s;
     s = ((v >> 16) > 0) << 4;
@@ -101,8 +96,6 @@ int logtwo(int v) {
  *    Difficulty: 2
  */
 int byteSwap(int x, int n, int m) {
-    /* 异或翻牌子：d = 两字节的差异格，在 n、m 两个位置异或 d<<(n*8)、d<<(m*8)
-       即完成交换（n=m 时 d=0，自动还原） */
     int a = (x >> (n << 3)) & 0xFF;
     int b = (x >> (m << 3)) & 0xFF;
     int d = a ^ b;
@@ -118,9 +111,6 @@ int byteSwap(int x, int n, int m) {
  *   Difficulty: 3
  */
 unsigned reverse(unsigned v) {
-    /* 循环逐位搬运：每轮 r 左移腾出最右格、接住 v 的最右格，v 右移露下一格。
-       用计数器 m（1,2,4,...,2^32 回绕到0）控制 32 轮，
-       循环条件不带比较符——本题 Legal ops 里没有 < > */
     unsigned r = 0;
     unsigned m = 1;
     while (m) {
@@ -140,8 +130,6 @@ unsigned reverse(unsigned v) {
  *   Difficulty: 3
  */
 int logicalShift(int x, int n) {
-    /* 算术右移后把高 n 格清零。np = n + !n 保证移位量 32-np <= 31 不触发 UB；
-       n=0 时再用 !n<<31 把最高格补回，掩码变成全1 */
     int np = n + !n;
     int mask = (1 << (33 + ~np)) + ~0;
     mask = mask | (!n << 31);
@@ -157,9 +145,6 @@ int logicalShift(int x, int n) {
  *   Difficulty: 4
  */
 int leftBitCount(int x) {
-    /* 对 x 直接二分：x>>k 等于 -1（符号扩展全1） <=> x 的最高 k 格全是1。
-       是则答案加上 k 并把 x 左移 k 格（低位移入0，天然是计数终止符）；
-       依次检查 16/8/4/2，最后剩 2 格时逐格检查（16+8+4+2+1+1 = 32 位全覆盖） */
     int ans = 0;
     int t;
     t = !(~(x >> 16));
@@ -191,8 +176,6 @@ int leftBitCount(int x) {
  *   Difficulty: 4
  */
 unsigned float_i2f(int x) {
-    /* 手工模拟 (float)x：取绝对值→左移到 1 顶格定指数→取 23 格尾数→
-       剩余 8 格向偶数舍入→进位连锁时指数+1→拼位模式 */
     unsigned sign = 0;
     unsigned a;
     int e = 31;
@@ -236,8 +219,6 @@ unsigned float_i2f(int x) {
  *   Difficulty: 4
  */
 unsigned floatScale2(unsigned uf) {
-    /* exp=255（Inf/NaN）原样返回；exp=0 尾数左移一格（顶进阶码自动规格化）；
-       规格化数阶码+1（加到255自然变Inf） */
     unsigned exp = (uf >> 23) & 0xFF;
     unsigned frac = uf & 0x7FFFFF;
     unsigned sign = uf & 0x80000000;
@@ -262,8 +243,6 @@ unsigned floatScale2(unsigned uf) {
  *   Difficulty: 3
  */
 int float64_f2i(unsigned uf1, unsigned uf2) {
-    /* e<0（含非规格化）绝对值<1 → 0；e>=31（含 Inf/NaN）→ 0x80000000；
-       否则整数部分 = 隐含1 << e 加上尾数的前 e 格（向零舍入即丢弃小数） */
     int sign = uf2 >> 31;
     int exp = (uf2 >> 20) & 0x7FF;
     int e = exp - 1023;
@@ -296,9 +275,6 @@ int float64_f2i(unsigned uf1, unsigned uf2) {
  *   Difficulty: 4
  */
 unsigned floatPower2(int x) {
-    /* 2^x 尾数恒为 1.000...，按 x 所在区间直接拼位模式：
-       x>127 上溢→+Inf；[-126,127] 规格化 (x+127)<<23；
-       [-149,-127] 非规格化 frac = 1<<(x+149)；更小 → 0 */
     if (x > 127)
         return 0x7F800000;
     if (x >= -126)
